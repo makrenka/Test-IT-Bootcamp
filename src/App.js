@@ -1,10 +1,9 @@
 import './App.css';
+import { CharList } from './components/CharList/CharList';
 
 function App() {
   return (
-    <div className="char-list">
-      hello
-    </div>
+    <CharList />
   );
 }
 
