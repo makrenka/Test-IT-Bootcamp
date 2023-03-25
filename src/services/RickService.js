@@ -20,7 +20,7 @@ export class RickService {
         const res = await this.getResource(
             `${this._apiBase}character/${id}`
         );
-        return this._transformCharacter(res.results[0]);
+        return this._transformCharacter(res);
     };
 
     _transformCharacter = (char) => {
