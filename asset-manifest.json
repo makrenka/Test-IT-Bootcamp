@@ -1,0 +1,19 @@
+{
+  "files": {
+    "main.css": "/Test-IT-Bootcamp/static/css/main.6b05370b.css",
+    "main.js": "/Test-IT-Bootcamp/static/js/main.07a8a0da.js",
+    "static/js/787.d8766870.chunk.js": "/Test-IT-Bootcamp/static/js/787.d8766870.chunk.js",
+    "static/media/abyss.jpg": "/Test-IT-Bootcamp/static/media/abyss.93d211d37b67a60bace9.jpg",
+    "static/media/error.gif": "/Test-IT-Bootcamp/static/media/error.42292aa12b6bc303ce99.gif",
+    "static/media/up-arrow-button.svg": "/Test-IT-Bootcamp/static/media/up-arrow-button.10c8cfa8eef1f4bfb476ada9ae581d4a.svg",
+    "static/media/close-button.svg": "/Test-IT-Bootcamp/static/media/close-button.c6b14701bce621ebe3ef316c8434b872.svg",
+    "index.html": "/Test-IT-Bootcamp/index.html",
+    "main.6b05370b.css.map": "/Test-IT-Bootcamp/static/css/main.6b05370b.css.map",
+    "main.07a8a0da.js.map": "/Test-IT-Bootcamp/static/js/main.07a8a0da.js.map",
+    "787.d8766870.chunk.js.map": "/Test-IT-Bootcamp/static/js/787.d8766870.chunk.js.map"
+  },
+  "entrypoints": [
+    "static/css/main.6b05370b.css",
+    "static/js/main.07a8a0da.js"
+  ]
+}
