@@ -12,15 +12,16 @@ export class CharList extends Component {
         charList: [],
         loading: true,
         error: false,
+        page: 1,
     }
 
     rickService = new RickService();
 
-    onCharList = (charList) => {
-        this.setState({
-            charList,
+    onCharList = (newCharList) => {
+        this.setState(({ page, charList }) => ({
+            charList: [...charList, ...newCharList],
             loading: false,
-        });
+        }));
     };
 
     onError = () => {
@@ -30,15 +31,39 @@ export class CharList extends Component {
         });
     };
 
-    updateCharList = () => {
+    updateCharList = (page) => {
+        this.setState({ loading: true })
         this.rickService
-            .getAllCharacters()
+            .getAllCharacters(page)
             .then(this.onCharList)
             .catch(this.onError);
     };
 
+    onScroll = () => {
+        const scrollTop = document.documentElement.scrollTop;
+        const scrollHeight = document.documentElement.scrollHeight;
+        const clientHeight = document.documentElement.clientHeight;
+
+        if (scrollTop + clientHeight >= scrollHeight) {
+            this.setState(({ page }) => ({ page: page + 1 }));
+        };
+    };
+
     componentDidMount() {
         this.updateCharList();
+        window.addEventListener('scroll', this.onScroll);
+    };
+
+    componentDidUpdate(prevProps, prevState) {
+        const { page } = this.state;
+        if (page !== prevState.page) {
+            this.updateCharList(page);
+        };
+
+    };
+
+    componentWillUnmount() {
+        window.removeEventListener('scroll', this.onScroll);
     };
 
     render() {
