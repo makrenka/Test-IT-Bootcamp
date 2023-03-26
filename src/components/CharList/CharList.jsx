@@ -1,10 +1,15 @@
 import { Component } from 'react';
+import { HandySvg } from 'handy-svg';
 
 import { RickService } from '../../services/RickService';
 import { Spinner } from '../Spinner';
 import { ErrorMessage } from '../ErrorMessage';
 
+import upButton from '../../assets/img/up-arrow-button.svg';
+
 import './CharList.scss';
+import classNames from 'classnames';
+
 
 export class CharList extends Component {
 
@@ -13,6 +18,7 @@ export class CharList extends Component {
         loading: true,
         error: false,
         page: 1,
+        scroll: 0,
     }
 
     rickService = new RickService();
@@ -49,9 +55,14 @@ export class CharList extends Component {
         };
     };
 
+    displayUpBtn = () => {
+        this.setState({ scroll: window.scrollY })
+    }
+
     componentDidMount() {
         this.updateCharList();
         window.addEventListener('scroll', this.onScroll);
+        window.addEventListener('scroll', this.displayUpBtn);
     };
 
     componentDidUpdate(prevProps, prevState) {
@@ -64,10 +75,11 @@ export class CharList extends Component {
 
     componentWillUnmount() {
         window.removeEventListener('scroll', this.onScroll);
+        window.removeEventListener('scroll', this.displayUpBtn);
     };
 
     render() {
-        const { loading, error, charList } = this.state;
+        const { loading, error, charList, scroll } = this.state;
         const { onModal } = this.props;
         const spinner = loading ? <Spinner /> : null;
         const errorMessage = error ? <ErrorMessage /> : null;
@@ -88,6 +100,17 @@ export class CharList extends Component {
                         </li>
                     )}
                 </ul>
+                <button
+                    className={classNames('char-list__up-btn', { active: scroll > 400 })}
+                    onClick={() => { window.scrollTo({ top: 0, behavior: 'smooth' }) }}
+                >
+                    <HandySvg
+                        src={upButton}
+                        className='char-list__up-btn-icon'
+                        width='50'
+                        height='50'
+                    />
+                </button>
             </div>
         );
     };

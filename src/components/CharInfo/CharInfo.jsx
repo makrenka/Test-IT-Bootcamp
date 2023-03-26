@@ -76,7 +76,7 @@ export class CharInfo extends Component {
                             src={closeBtn}
                             className='char-info__close-btn-icon'
                             width='30'
-                            heught='30'
+                            height='30'
                         />
                     </button >
                 </div>
