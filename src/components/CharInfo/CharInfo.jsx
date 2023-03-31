@@ -66,7 +66,7 @@ export class CharInfo extends Component {
         const content = loading || error || !char ? null : <View char={char} />;
 
         return (
-            <div className={classNames("overlay", { active: onModal })} onClick={closeModal}>
+            <>
                 <div className={classNames("char-info", { active: onModal })}>
                     {spinner}
                     {errorMessage}
@@ -80,7 +80,9 @@ export class CharInfo extends Component {
                         />
                     </button >
                 </div>
-            </div>
+                <div className={classNames("overlay", { active: onModal })} onClick={closeModal}></div>
+            </>
+
         );
     };
 };

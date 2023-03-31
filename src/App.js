@@ -4,6 +4,7 @@ import { CharList } from './components/CharList/CharList';
 import { CharInfo } from './components/CharInfo';
 
 import './App.css';
+import { Pagination } from './components/Pagination/Pagination';
 
 export class App extends Component {
 
@@ -34,6 +35,7 @@ export class App extends Component {
           closeModal={this.closeModal}
           selectedId={selectedId}
         />
+        <Pagination />
       </>
     );
   };
