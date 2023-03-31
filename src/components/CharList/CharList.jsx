@@ -24,7 +24,7 @@ export class CharList extends Component {
     rickService = new RickService();
 
     onCharList = (newCharList) => {
-        this.setState(({ page, charList }) => ({
+        this.setState(({ charList }) => ({
             charList: [...charList, ...newCharList],
             loading: false,
         }));
