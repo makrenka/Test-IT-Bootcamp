@@ -11,6 +11,7 @@ export class App extends Component {
   state = {
     modalOpen: false,
     selectedId: null,
+    currentPage: 1,
   };
 
   onModal = (id) => {
@@ -24,18 +25,22 @@ export class App extends Component {
     this.setState({ modalOpen: false });
   };
 
+  onCurrentPage = (page) => {
+    this.setState({ currentPage: page });
+  };
+
   render() {
-    const { modalOpen, selectedId } = this.state;
+    const { modalOpen, selectedId, currentPage } = this.state;
 
     return (
       <>
-        <CharList onModal={this.onModal} />
+        <CharList onModal={this.onModal} currentPage={currentPage} />
         <CharInfo
           onModal={modalOpen}
           closeModal={this.closeModal}
           selectedId={selectedId}
         />
-        <Pagination />
+        <Pagination onCurrentPage={this.onCurrentPage} />
       </>
     );
   };

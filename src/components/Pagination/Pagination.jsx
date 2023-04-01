@@ -1,3 +1,4 @@
+import classNames from "classnames";
 import { Component } from "react";
 
 import './Pagination.scss';
@@ -32,17 +33,20 @@ export class Pagination extends Component {
    * [x] => represents current page
    * {...x} => represents page neighbours
    */
+
+    totalPages = 42;
+    pageNeighbours = 2;
+
     fetchPageNumbers = () => {
-        const totalPages = 42;
         const currentPage = this.state.currentPage;
-        const pageNeighbours = 2;
+
         /**
      * totalNumbers: the total page numbers to show on the control
      */
         const totalNumbers = (this.pageNeighbours * 2) + 3;
 
-        const startPage = Math.max(2, currentPage - pageNeighbours);
-        const endPage = Math.min(totalPages - 1, currentPage + pageNeighbours);
+        const startPage = Math.max(2, currentPage - this.pageNeighbours);
+        const endPage = Math.min(this.totalPages - 1, currentPage + this.pageNeighbours);
         let pages = range(startPage, endPage);
 
         /**
@@ -51,7 +55,7 @@ export class Pagination extends Component {
        * spillOffset: number of hidden pages either to the left or to the right
        */
         const hasLeftSpill = startPage > 2;
-        const hasRightSpill = (totalPages - endPage) > 1;
+        const hasRightSpill = (this.totalPages - endPage) > 1;
         const spillOffset = totalNumbers - (pages.length + 1);
 
         switch (true) {
@@ -77,22 +81,54 @@ export class Pagination extends Component {
             };
         };
 
-        return [1, ...pages, totalPages];
+        return [1, ...pages, this.totalPages];
+    };
+
+    gotoPage = (page) => {
+        this.props.onCurrentPage(page);
+        this.setState({ currentPage: page });
+    };
+
+    handleMoveLeft = () => {
+        this.gotoPage(this.state.currentPage - 1);
+    };
+
+    handleMoveRight = () => {
+        this.gotoPage(this.state.currentPage + 1);
     };
 
     render() {
+        const { currentPage } = this.state;
+        const pages = this.fetchPageNumbers();
+
         return (
             <ul className="pagination">
-                <li className="pagination__item">
-                    <a href="#" aria-label="Previos" className="pagination__item-link">
-                        &laquo;
-                    </a>
-                </li>
-                <li className="pagination__item">
-                    <a href="#" aria-label="Next" className="pagination__item-link">
-                        &raquo;
-                    </a>
-                </li>
+                {pages.map((page, index) => {
+
+                    if (page === LEFT_PAGE) return (
+                        <li className="pagination__item" key={index} onClick={this.handleMoveLeft}>
+                            &laquo;
+                        </li>
+                    );
+
+                    if (page === RIGHT_PAGE) return (
+                        <li className="pagination__item" key={index} onClick={this.handleMoveRight}>
+                            &raquo;
+                        </li>
+                    );
+
+                    return (
+                        <li
+                            key={index}
+                            className={classNames("pagination__item", { 'active': currentPage === page })}
+                            onClick={() => this.gotoPage(page)}
+                        >
+                            {page}
+                        </li>
+                    )
+                })}
+
+
             </ul>
         )
     }

@@ -23,11 +23,18 @@ export class CharList extends Component {
 
     rickService = new RickService();
 
-    onCharList = (newCharList) => {
+    onCharListScroll = (newCharList) => {
         this.setState(({ charList }) => ({
             charList: [...charList, ...newCharList],
             loading: false,
         }));
+    };
+
+    onCharListPagination = (charList) => {
+        this.setState({
+            charList,
+            loading: false,
+        });
     };
 
     onError = () => {
@@ -37,13 +44,21 @@ export class CharList extends Component {
         });
     };
 
-    updateCharList = (page) => {
-        this.setState({ loading: true })
+    updateCharListScroll = (page) => {
+        this.setState({ loading: true });
         this.rickService
             .getAllCharacters(page)
-            .then(this.onCharList)
+            .then(this.onCharListScroll)
             .catch(this.onError);
     };
+
+    updateCharListPagination = (page) => {
+        this.setState({ loading: true });
+        this.rickService
+            .getAllCharacters(page)
+            .then(this.onCharListPagination)
+            .catch(this.onError);
+    }
 
     onScroll = () => {
         const scrollTop = document.documentElement.scrollTop;
@@ -60,17 +75,20 @@ export class CharList extends Component {
     }
 
     componentDidMount() {
-        this.updateCharList();
+        this.updateCharListPagination();
         window.addEventListener('scroll', this.onScroll);
         window.addEventListener('scroll', this.displayUpBtn);
     };
 
     componentDidUpdate(prevProps, prevState) {
+        const { currentPage } = this.props;
         const { page } = this.state;
+        if (currentPage !== prevProps.currentPage) {
+            this.updateCharListPagination(currentPage);
+        }
         if (page !== prevState.page) {
-            this.updateCharList(page);
+            this.updateCharListScroll(page);
         };
-
     };
 
     componentWillUnmount() {
