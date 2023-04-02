@@ -99,10 +99,11 @@ export class Pagination extends Component {
 
     render() {
         const { currentPage } = this.state;
+        const { pagination } = this.props;
         const pages = this.fetchPageNumbers();
 
         return (
-            <ul className="pagination">
+            <ul className={classNames("pagination", { active: pagination })}>
                 {pages.map((page, index) => {
 
                     if (page === LEFT_PAGE) return (

@@ -12,6 +12,7 @@ export class App extends Component {
     modalOpen: false,
     selectedId: null,
     currentPage: 1,
+    pagination: false,
   };
 
   onModal = (id) => {
@@ -29,18 +30,29 @@ export class App extends Component {
     this.setState({ currentPage: page });
   };
 
+  togglePagination = (pagination) => {
+    this.setState({ pagination });
+  };
+
   render() {
-    const { modalOpen, selectedId, currentPage } = this.state;
+    const { modalOpen, selectedId, currentPage, pagination } = this.state;
 
     return (
       <>
-        <CharList onModal={this.onModal} currentPage={currentPage} />
+        <CharList
+          onModal={this.onModal}
+          currentPage={currentPage}
+          togglePagination={this.togglePagination}
+        />
         <CharInfo
           onModal={modalOpen}
           closeModal={this.closeModal}
           selectedId={selectedId}
         />
-        <Pagination onCurrentPage={this.onCurrentPage} />
+        <Pagination
+          onCurrentPage={this.onCurrentPage}
+          pagination={pagination}
+        />
       </>
     );
   };

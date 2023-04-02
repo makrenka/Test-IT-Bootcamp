@@ -19,6 +19,7 @@ export class CharList extends Component {
         error: false,
         page: 1,
         scroll: 0,
+        pagination: false,
     }
 
     rickService = new RickService();
@@ -65,14 +66,18 @@ export class CharList extends Component {
         const scrollHeight = document.documentElement.scrollHeight;
         const clientHeight = document.documentElement.clientHeight;
 
-        if (scrollTop + clientHeight >= scrollHeight) {
+        if ((scrollTop + clientHeight >= scrollHeight) && !this.state.pagination) {
             this.setState(({ page }) => ({ page: page + 1 }));
         };
     };
 
     displayUpBtn = () => {
-        this.setState({ scroll: window.scrollY })
-    }
+        this.setState({ scroll: window.scrollY });
+    };
+
+    togglePagination = () => {
+        this.setState((state) => ({ pagination: !state.pagination }));
+    };
 
     componentDidMount() {
         this.updateCharListPagination();
@@ -82,12 +87,15 @@ export class CharList extends Component {
 
     componentDidUpdate(prevProps, prevState) {
         const { currentPage } = this.props;
-        const { page } = this.state;
+        const { page, pagination } = this.state;
         if (currentPage !== prevProps.currentPage) {
             this.updateCharListPagination(currentPage);
         }
         if (page !== prevState.page) {
             this.updateCharListScroll(page);
+        };
+        if (pagination !== prevState.pagination) {
+            this.props.togglePagination(this.state.pagination);
         };
     };
 
@@ -97,7 +105,7 @@ export class CharList extends Component {
     };
 
     render() {
-        const { loading, error, charList, scroll } = this.state;
+        const { loading, error, charList, scroll, pagination } = this.state;
         const { onModal } = this.props;
         const spinner = loading ? <Spinner /> : null;
         const errorMessage = error ? <ErrorMessage /> : null;
@@ -128,6 +136,9 @@ export class CharList extends Component {
                         width='50'
                         height='50'
                     />
+                </button>
+                <button className='char-list__pagination-toggle' onClick={this.togglePagination}>
+                    {pagination ? 'Without pagination' : 'Display pagination'}
                 </button>
             </div>
         );
