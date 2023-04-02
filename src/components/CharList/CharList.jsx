@@ -76,7 +76,10 @@ export class CharList extends Component {
     };
 
     togglePagination = () => {
-        this.setState((state) => ({ pagination: !state.pagination }));
+        this.setState((state) => ({
+            pagination: !state.pagination,
+            charList: [],
+        }));
     };
 
     componentDidMount() {
@@ -96,6 +99,7 @@ export class CharList extends Component {
         };
         if (pagination !== prevState.pagination) {
             this.props.togglePagination(this.state.pagination);
+            this.updateCharListPagination(currentPage);
         };
     };
 
