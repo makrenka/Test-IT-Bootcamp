@@ -19,15 +19,23 @@ export class CharList extends Component {
         error: false,
         page: 1,
         scroll: 0,
+        pagination: false,
     }
 
     rickService = new RickService();
 
-    onCharList = (newCharList) => {
+    onCharListScroll = (newCharList) => {
         this.setState(({ charList }) => ({
             charList: [...charList, ...newCharList],
             loading: false,
         }));
+    };
+
+    onCharListPagination = (charList) => {
+        this.setState({
+            charList,
+            loading: false,
+        });
     };
 
     onError = () => {
@@ -37,40 +45,62 @@ export class CharList extends Component {
         });
     };
 
-    updateCharList = (page) => {
-        this.setState({ loading: true })
+    updateCharListScroll = (page) => {
+        this.setState({ loading: true });
         this.rickService
             .getAllCharacters(page)
-            .then(this.onCharList)
+            .then(this.onCharListScroll)
             .catch(this.onError);
     };
+
+    updateCharListPagination = (page) => {
+        this.setState({ loading: true });
+        this.rickService
+            .getAllCharacters(page)
+            .then(this.onCharListPagination)
+            .catch(this.onError);
+    }
 
     onScroll = () => {
         const scrollTop = document.documentElement.scrollTop;
         const scrollHeight = document.documentElement.scrollHeight;
         const clientHeight = document.documentElement.clientHeight;
 
-        if (scrollTop + clientHeight >= scrollHeight) {
+        if ((scrollTop + clientHeight >= scrollHeight) && !this.state.pagination) {
             this.setState(({ page }) => ({ page: page + 1 }));
         };
     };
 
     displayUpBtn = () => {
-        this.setState({ scroll: window.scrollY })
-    }
+        this.setState({ scroll: window.scrollY });
+    };
+
+    togglePagination = () => {
+        this.setState((state) => ({
+            pagination: !state.pagination,
+            charList: [],
+        }));
+    };
 
     componentDidMount() {
-        this.updateCharList();
+        this.updateCharListPagination();
         window.addEventListener('scroll', this.onScroll);
         window.addEventListener('scroll', this.displayUpBtn);
     };
 
     componentDidUpdate(prevProps, prevState) {
-        const { page } = this.state;
+        const { currentPage } = this.props;
+        const { page, pagination } = this.state;
+        if (currentPage !== prevProps.currentPage) {
+            this.updateCharListPagination(currentPage);
+        }
         if (page !== prevState.page) {
-            this.updateCharList(page);
+            this.updateCharListScroll(page);
         };
-
+        if (pagination !== prevState.pagination) {
+            this.props.togglePagination(this.state.pagination);
+            this.updateCharListPagination(currentPage);
+        };
     };
 
     componentWillUnmount() {
@@ -79,7 +109,7 @@ export class CharList extends Component {
     };
 
     render() {
-        const { loading, error, charList, scroll } = this.state;
+        const { loading, error, charList, scroll, pagination } = this.state;
         const { onModal } = this.props;
         const spinner = loading ? <Spinner /> : null;
         const errorMessage = error ? <ErrorMessage /> : null;
@@ -110,6 +140,9 @@ export class CharList extends Component {
                         width='50'
                         height='50'
                     />
+                </button>
+                <button className='char-list__pagination-toggle' onClick={this.togglePagination}>
+                    {pagination ? 'Without pagination' : 'Display pagination'}
                 </button>
             </div>
         );

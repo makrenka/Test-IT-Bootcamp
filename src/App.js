@@ -4,12 +4,15 @@ import { CharList } from './components/CharList/CharList';
 import { CharInfo } from './components/CharInfo';
 
 import './App.css';
+import { Pagination } from './components/Pagination/Pagination';
 
 export class App extends Component {
 
   state = {
     modalOpen: false,
     selectedId: null,
+    currentPage: 1,
+    pagination: false,
   };
 
   onModal = (id) => {
@@ -23,16 +26,32 @@ export class App extends Component {
     this.setState({ modalOpen: false });
   };
 
+  onCurrentPage = (page) => {
+    this.setState({ currentPage: page });
+  };
+
+  togglePagination = (pagination) => {
+    this.setState({ pagination });
+  };
+
   render() {
-    const { modalOpen, selectedId } = this.state;
+    const { modalOpen, selectedId, currentPage, pagination } = this.state;
 
     return (
       <>
-        <CharList onModal={this.onModal} />
+        <CharList
+          onModal={this.onModal}
+          currentPage={currentPage}
+          togglePagination={this.togglePagination}
+        />
         <CharInfo
           onModal={modalOpen}
           closeModal={this.closeModal}
           selectedId={selectedId}
+        />
+        <Pagination
+          onCurrentPage={this.onCurrentPage}
+          pagination={pagination}
         />
       </>
     );
