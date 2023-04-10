@@ -43,6 +43,7 @@ export class App extends Component {
           onModal={this.onModal}
           currentPage={currentPage}
           togglePagination={this.togglePagination}
+          onCurrentPage={this.onCurrentPage}
         />
         <CharInfo
           onModal={modalOpen}

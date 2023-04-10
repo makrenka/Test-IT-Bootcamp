@@ -97,6 +97,15 @@ export class Pagination extends Component {
         this.gotoPage(this.state.currentPage + 1);
     };
 
+    componentDidUpdate = (prevProps) => {
+        const { pagination } = this.props;
+        if (pagination !== prevProps.pagination) {
+            if (!pagination) {
+                this.setState({ currentPage: 1 });
+            };
+        };
+    };
+
     render() {
         const { currentPage } = this.state;
         const { pagination } = this.props;

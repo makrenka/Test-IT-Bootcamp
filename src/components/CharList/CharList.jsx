@@ -1,5 +1,6 @@
-import { Component } from 'react';
+import React, { Component } from 'react';
 import { HandySvg } from 'handy-svg';
+import classNames from 'classnames';
 
 import { RickService } from '../../services/RickService';
 import { Spinner } from '../Spinner';
@@ -8,8 +9,6 @@ import { ErrorMessage } from '../ErrorMessage';
 import upButton from '../../assets/img/up-arrow-button.svg';
 
 import './CharList.scss';
-import classNames from 'classnames';
-
 
 export class CharList extends Component {
 
@@ -23,6 +22,8 @@ export class CharList extends Component {
     }
 
     rickService = new RickService();
+    lastItem = React.createRef();
+    totalPage = 42;
 
     onCharListScroll = (newCharList) => {
         this.setState(({ charList }) => ({
@@ -59,16 +60,34 @@ export class CharList extends Component {
             .getAllCharacters(page)
             .then(this.onCharListPagination)
             .catch(this.onError);
-    }
+    };
 
-    onScroll = () => {
-        const scrollTop = document.documentElement.scrollTop;
-        const scrollHeight = document.documentElement.scrollHeight;
-        const clientHeight = document.documentElement.clientHeight;
+    // onScroll = () => {
+    //     const scrollTop = document.documentElement.scrollTop;
+    //     const scrollHeight = document.documentElement.scrollHeight;
+    //     const clientHeight = document.documentElement.clientHeight;
 
-        if ((scrollTop + clientHeight >= scrollHeight) && !this.state.pagination) {
+    //     if ((scrollTop + clientHeight >= scrollHeight) && !this.state.pagination) {
+    //         this.setState(({ page }) => ({ page: page + 1 }));
+    //     };
+    // };
+
+    actionInSight = (entries) => {
+        if (entries[0].isIntersecting && this.state.page <= this.totalPage) {
             this.setState(({ page }) => ({ page: page + 1 }));
         };
+    };
+
+    observeToItems = () => {
+        const options = {
+            root: document.querySelector('char-list__grid'),
+            rootMargin: '0px',
+            threshold: 1.0
+        }
+
+        const observerLoader = new IntersectionObserver(this.actionInSight, options);
+        observerLoader.disconnect();
+        observerLoader.observe(this.lastItem.current);
     };
 
     displayUpBtn = () => {
@@ -76,21 +95,31 @@ export class CharList extends Component {
     };
 
     togglePagination = () => {
-        this.setState((state) => ({
-            pagination: !state.pagination,
-            charList: [],
-        }));
+        if (!this.state.pagination) {
+            this.setState((state) => ({
+                pagination: !state.pagination,
+                page: 1,
+                charList: [],
+            }));
+        } else {
+            this.setState((state) => ({
+                pagination: !state.pagination,
+                page: 1,
+            }));
+            this.updateCharListPagination(this.state.page);
+            this.props.onCurrentPage(this.state.page);
+        };
     };
 
     componentDidMount() {
         this.updateCharListPagination();
-        window.addEventListener('scroll', this.onScroll);
+        // window.addEventListener('scroll', this.onScroll);
         window.addEventListener('scroll', this.displayUpBtn);
     };
 
     componentDidUpdate(prevProps, prevState) {
-        const { currentPage } = this.props;
-        const { page, pagination } = this.state;
+        const { currentPage, togglePagination } = this.props;
+        const { charList, page, pagination } = this.state;
         if (currentPage !== prevProps.currentPage) {
             this.updateCharListPagination(currentPage);
         }
@@ -98,8 +127,13 @@ export class CharList extends Component {
             this.updateCharListScroll(page);
         };
         if (pagination !== prevState.pagination) {
-            this.props.togglePagination(this.state.pagination);
-            this.updateCharListPagination(currentPage);
+            togglePagination(this.state.pagination);
+            if (pagination) {
+                this.updateCharListPagination(page);
+            };
+        };
+        if (charList !== prevState.charList && !pagination) {
+            this.observeToItems();
         };
     };
 
@@ -119,15 +153,32 @@ export class CharList extends Component {
                 {spinner}
                 {errorMessage}
                 <ul className="char-list__grid">
-                    {charList.map(({ id, name, image }) =>
-                        <li
-                            className="char-list__grid-item"
-                            onClick={() => { onModal(id) }}
-                            key={id}
-                        >
-                            <img src={image} alt={name} className='char-list__grid-item-img' />
-                            <p className='char-list__grid-item-title'>{name}</p>
-                        </li>
+                    {charList.map(({ id, name, image }, index) => {
+                        if (index + 1 === charList.length) {
+                            return (
+                                <li
+                                    className="char-list__grid-item"
+                                    onClick={() => { onModal(id) }}
+                                    key={id}
+                                    ref={this.lastItem}
+                                >
+                                    <img src={image} alt={name} className='char-list__grid-item-img' />
+                                    <p className='char-list__grid-item-title'>{name}</p>
+                                </li>
+                            )
+                        }
+
+                        return (
+                            <li
+                                className="char-list__grid-item"
+                                onClick={() => { onModal(id) }}
+                                key={id}
+                            >
+                                <img src={image} alt={name} className='char-list__grid-item-img' />
+                                <p className='char-list__grid-item-title'>{name}</p>
+                            </li>
+                        )
+                    }
                     )}
                 </ul>
                 <button
